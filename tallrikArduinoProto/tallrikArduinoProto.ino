@@ -5,7 +5,7 @@
 #define GREENLIGHT_PIN 6
 #define REDLIGHT_PIN 7
 #define SOLENOID_MOVETIME_MS 100
-#define SUPER_TIMEOUT_MS 5000
+#define SUPER_TIMEOUT_MS 30000
 #define SOLENOID_MOVELEVEL 255
 #define SOLENOID_HOLDLEVEL 30
 #define AFTERBLIPP_TIMEOUT 5000
@@ -65,10 +65,10 @@ void loop()
         {
             setState(2);
         }
-        //        if (millis() - stateChangeTime > AFTERBLIPP_TIMEOUT)
-        //        {
-        //            setState(0);
-        //        }
+        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
+        {
+            setState(0);
+        }
         break;
     case 2:
         // Step 1 of opening sequence
@@ -78,6 +78,10 @@ void loop()
         if (millis() - stateChangeTime > SOLENOID_MOVETIME_MS)
         {
             setState(3);
+        }
+        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
+        {
+            setState(0);
         }
         break;
     case 3:
@@ -89,6 +93,10 @@ void loop()
         if (isSensor2Triggered == HIGH && isSensor1Triggered == HIGH)
         {
             setState(4);
+        }
+        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
+        {
+            setState(0);
         }
         break;
     case 4:
@@ -108,6 +116,10 @@ void loop()
         {
             setState(5);
         }
+        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
+        {
+            setState(0);
+        }
         break;
     case 5:
         // Plate past solenoid, waiting for plate to leave machine before locking
@@ -123,6 +135,10 @@ void loop()
         if (isSensor2Triggered == LOW)
         {
             setState(6);
+        }
+        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
+        {
+            setState(0);
         }
         break;
     case 6:
