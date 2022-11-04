@@ -1,15 +1,15 @@
 #define SOLENOID1_PIN 3
 #define CAPSENS1_PIN 8
 #define CAPSENS2_PIN 9
-#define TESTBUTTON_PIN 4
+#define TESTBUTTON_PIN 10
 #define GREENLIGHT_PIN 6
 #define REDLIGHT_PIN 7
 #define SOLENOID_MOVETIME_MS 100
 #define SUPER_TIMEOUT_MS 20000
 #define SOLENOID_MOVELEVEL 255
-#define SOLENOID_HOLDLEVEL 30
+#define SOLENOID_HOLDLEVEL 50
 #define AFTERBLIPP_TIMEOUT 5000
-#define COOLDOWN_TIME_MS 100
+#define COOLDOWN_TIME_MS 250
 
 bool isSensor1Triggered = 0;
 bool isSensor2Triggered = 0;
@@ -79,10 +79,6 @@ void loop()
         {
             setState(3);
         }
-        if (millis() - stateChangeTime > SUPER_TIMEOUT_MS)
-        {
-            setState(0);
-        }
         break;
     case 3:
         // Step 2 of opening sequence, waiting for sens 2 to trigger
@@ -146,6 +142,11 @@ void loop()
         analogWrite(SOLENOID1_PIN, SOLENOID_HOLDLEVEL);
         digitalWrite(GREENLIGHT_PIN, HIGH);
         digitalWrite(REDLIGHT_PIN, LOW);
+        if (isSensor2Triggered == HIGH)
+        {
+            Serial.println("Wobbly plate leaving?");
+            setState(5);
+        }
         if (millis() - stateChangeTime > COOLDOWN_TIME_MS)
         {
             Serial.println("Cooldown");
